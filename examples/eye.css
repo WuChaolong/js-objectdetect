@@ -1,0 +1,143 @@
+/* eye.css */
+
+#video{
+  height: 100px;
+  /* position: fixed; */
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  left: -100px;
+  right: -100px;
+  margin: auto;
+  transform: rotateY(180deg); */
+}
+
+body{
+  background-color: black;
+  margin: 0 auto;
+  /* padding: 150px; */
+  text-align: center;
+}
+div{
+  box-sizing: border-box;
+  position: relative;
+}
+
+.eye{
+  width: 400px;
+  height: 400px;
+  margin: auto;
+  overflow: hidden;
+  /*   -webkit-animation: swingeye 30s infinite; */
+  /* display: inline-block; */
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* transform: translate(-10px,0); */
+  /* transform: translate(-144.298px, 0px); */
+  transition: transform 1s;
+}
+.sclera,
+.iris,
+.pupil,
+.lensflare,
+.eyelid{
+  border-radius: 50%;
+}
+
+.sclera{
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  padding: 75px;
+  position: relative;
+  /* background: -webkit-radial-gradient(50% 40%, circle, #fcfcfc, #efeff1 66%, #9b5050 100%); */
+  /* background: radial-gradient(circle at 50% 40%, #fcfcfc, #efeff1 66%, #9b5050 100%); */
+}
+
+.sclera {}
+
+.sclera {}
+
+.iris{
+  background-color: #222;
+  width: 250px;
+  height: 250px;
+  padding: 75px;
+}
+
+.pupil{
+  background-color: black;
+  width: 100px;
+  height: 100px;
+  overflow:hidden;
+}
+
+.lensflare{
+  background-color: white;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 65px;
+  left: 50px;
+  z-index: 1;
+}
+
+.eyelid{
+  background-color: black;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-transform: scale(1.5, 1);
+  -webkit-animation: bateye 5s infinite;
+  z-index: 2;
+}
+
+@-webkit-keyframes swingeye /* Safari and Chrome */
+{
+  0%, 100% {left: 0px}
+  20%{ left: 0; }
+  25%{ left: -250px;}
+  45%{ left: 20px;}
+
+  70%{ left: 0; }
+  75%{ left: 300px;}
+  95%{ left: -50px;}
+}
+
+
+@-webkit-keyframes bateye /* Safari and Chrome */
+{
+  0%, 100% {top: -400px;}
+  22%{ top: -400px;}
+  25%  {top: -10px;}
+  27%  {top: -10px;}
+  30%{ top: -400px;}
+
+  48%{ top: -400px;}
+  53%  {top: -10px;}
+  57%{ top: 0px;}
+  60%{ top: -400px;}
+}
+
+.cansee{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20px;
+  /* background-color: red; */
+  /* background-color: #222; */
+  text-align: center;
+  box-sizing: border-box;
+  font-family: "proxima-nova-soft",sans-serif;
+  font-size: 45px;
+  font-weight: bold;
+  padding: 30px;
+  text-align: center;
+  color: white;
+}
