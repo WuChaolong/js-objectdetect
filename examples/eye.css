@@ -30,8 +30,8 @@ div{
 }
 
 .eye{
-  width: 20em;
-  height: 20em;
+  width: 15em;
+  height: 15em;
   margin: auto;
   overflow: hidden;
   /*   -webkit-animation: swingeye 30s infinite; */
@@ -82,8 +82,8 @@ div{
 
 .pupil{
   background-color: black;
-  width: 50%;
-  height: 50%;
+  width: 45%;
+  height: 45%;
   overflow:hidden;
   position: absolute;
   top: 0;
@@ -137,13 +137,13 @@ div{
 {
   0%, 100% {bottom: 100%;}
   22%{ bottom: 100%;}
-  25%  {bottom: 10px;}
-  27%  {bottom: 10px;}
+  25%  {bottom: 10%;}
+  27%  {bottom: 10%;}
   30%{ bottom: 100%;}
 
   48%{ bottom: 100%;}
-  53%  {bottom: 10px;}
-  57%{ bottom: 0px;}
+  53%  {bottom: 10%;}
+  57%{ bottom: 0;}
   60%{ bottom: 100%;}
 }
 
