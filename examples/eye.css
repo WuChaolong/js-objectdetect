@@ -11,12 +11,19 @@
   margin: auto;
   transform: rotateY(180deg); */
 }
-
+html{
+    height: 100%;
+    width: 100%;
+}
 body{
   background-color: black;
   margin: 0 auto;
   /* padding: 150px; */
   text-align: center;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 div{
   box-sizing: border-box;
