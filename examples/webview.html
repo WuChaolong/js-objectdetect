@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+    <head>
+         <script type="text/javascript" src="https://www.searchandmap.com/php/cast/adapter.js.php"></script>
+         <script type="text/javascript" src="https://www.searchandmap.com/php/cast/kurento-utils.min.js.php"></script>
+    </head>
+    <body style="background-color: black; height: 100%; width: 100%; padding: 0; margin: 0;">
+        <video id="video" autoplay style="height: 100%; width: 100%; max-height: 100%; max-width: 100%; object-fit: cover; position: absolute;"></video>
+
+        <script type="text/javascript">
+            var ws = new WebSocket('wss://' + 'kms.searchandmap.com:8443' + '/cast');
+            var video;
+            var webRtcPeer;
+            var sessionID;
+            var videoSource;
+            var devices = Array();
+            var selectedDeviceIndex = 0;
+
+            window.onload = function () {
+                video = document.getElementById('video');
+                
+                //Get Devices
+                navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(handleError);
+                
+                //Strat Local Preview
+                startLocal();
+            };
+
+            window.onbeforeunload = function () {
+                stopLocal();
+                stop();
+                ws.close();
+            };
+
+            ws.onopen = function (e) {
+                console.log("Connection established!");
+            };
+
+            ws.onmessage = function (message) {
+                var parsedMessage = JSON.parse(message.data);
+                console.info('Received message: ' + message.data);
+
+                switch (parsedMessage.id) {
+                    case 'presenterResponse':
+                        presenterResponse(parsedMessage);
+                        break;
+                    case 'stopCommunication':
+                        dispose();
+                        break;
+                    case 'iceCandidate':
+                        webRtcPeer.addIceCandidate(parsedMessage.candidate);
+                        break;
+                    case 'viewersCount':
+                        console.info("Viewers Count is " + parsedMessage.count);
+                        Android.viewersCountDidChange(parsedMessage.count);
+                        break;
+                    default:
+                        console.error('Unrecognized message', parsedMessage);
+                }
+            };
+
+            function presenterResponse(message) {
+                if (message.response !== 'accepted') {
+                    var errorMsg = message.message ? message.message : 'Unknow error';
+                    console.warn('Call not accepted for the following reason: ' + errorMsg);
+                    dispose();
+                } else {
+                    webRtcPeer.processAnswer(message.sdpAnswer);
+                }
+            }
+
+            function onOfferPresenter(error, offerSdp) {
+                if (error)
+                    return onError(error);
+
+                var message = {
+                    id: 'presenter',
+                    sdpOffer: offerSdp,
+                    session: sessionID
+                };
+                sendMessage(message);
+            }
+
+            function onIceCandidate(candidate) {
+                console.log('Local candidate' + JSON.stringify(candidate));
+
+                var message = {
+                    id: 'onIceCandidate',
+                    candidate: candidate
+                };
+                sendMessage(message);
+            }
+
+            function stopStream() {
+                if (webRtcPeer) {
+                    var message = {
+                        id: 'stop'
+                    };
+                    sendMessage(message);
+                    dispose();
+                }
+            }
+
+            function dispose() {
+                if (webRtcPeer) {
+                    webRtcPeer.dispose();
+                    webRtcPeer = null;
+                }
+            }
+
+            function sendMessage(message) {
+                var jsonMessage = JSON.stringify(message);
+                console.log('Senging message: ' + jsonMessage);
+                ws.send(jsonMessage);
+            }
+
+            function startStream(sid) {
+                stopLocal();
+                
+                sessionID = sid;
+
+                if (!webRtcPeer) {
+                    var options = {
+                        localVideo: video,
+                        onicecandidate: onIceCandidate,
+                        mediaConstraints: {
+                            audio: true,
+                            video: {deviceId: videoSource ? {exact: videoSource} : undefined}
+                        }
+                    };
+
+                    webRtcPeer = kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options, function (error) {
+                        if (error)
+                            return onError(error);
+
+                        this.generateOffer(onOfferPresenter);
+                    });
+                }
+            }
+
+            function startLocal() {
+                stopLocal();
+                var constraints = window.constraints = {
+                    audio: false,
+                    video: {deviceId: videoSource ? {exact: videoSource} : undefined}
+                };
+                navigator.mediaDevices.getUserMedia(constraints).
+                        then(handleSuccess).catch(handleError);
+            }
+
+            function stopLocal() {
+                if (window.stream) {
+                    window.stream.getTracks().forEach(function (track) {
+                        track.stop();
+                    });
+                }
+            }
+
+            function handleSuccess(stream) {
+                var videoTracks = stream.getVideoTracks();
+                console.log('Got stream with constraints:', constraints);
+                console.log('Using video device: ' + videoTracks[0].label);
+                stream.oninactive = function () {
+                    console.log('Stream inactive');
+                };
+                window.stream = stream; // make variable available to browser console
+                video.srcObject = stream;
+            }
+
+            function handleError(error) {
+                if (error.name === 'ConstraintNotSatisfiedError') {
+                    errorMsg('The resolution ' + constraints.video.width.exact + 'x' +
+                            constraints.video.width.exact + ' px is not supported by your device.');
+                } else if (error.name === 'PermissionDeniedError') {
+                    errorMsg('Permissions have not been granted to use your camera and ' +
+                            'microphone, you need to allow the page access to your devices in ' +
+                            'order for the demo to work.');
+                }
+                errorMsg('getUserMedia error: ' + error.name, error);
+            }
+
+            function errorMsg(msg, error) {
+                console.error(msg + '' + error);
+            }
+            
+            function gotDevices(deviceInfos) {
+                 for (var i = 0; i !== deviceInfos.length; ++i) {
+                     var deviceInfo = deviceInfos[i];
+                     var deviceId = deviceInfo.deviceId;
+                     if (deviceInfo.kind === 'videoinput'){
+                         devices.push(deviceId);
+                     }
+                 }
+            }
+            
+            function switchCamera(){
+                if(devices.length > 1){
+                    selectedDeviceIndex = (selectedDeviceIndex === 0) ? 1 : 0;
+                    videoSource = devices[selectedDeviceIndex];
+                    startLocal();
+                }
+            }
+        </script>
+    </body>
+</html>
