@@ -231,11 +231,13 @@ function webview(){
 						eye.style.transform='translate('+(video.videoWidth/2-eyescenter[0])+'px,'+0||(eyescenter[1]-video.videoHeight/2)+'px)';
 						eyelid.style.display = "none";
 						console.log(eyescenter);
+						eyescenter = null;
 
 					} else {
 						eyelid.style.display = "block";
 						console.log("can't see you!");
 					}
+					coords = null;
 				}
 			}
 }
