@@ -47,9 +47,20 @@ window.onload = function() {
 					coord[3] *= video.videoHeight / detector.canvas.height;
 					
                     var eyescenter = [coord[0]+coord[2]/2,coord[1] + coord[3]/(2/8*10)];
-                    eye.style.transform='translate('+(video.videoWidth/2-eyescenter[0])+'px,'+0||(eyescenter[1]-video.videoHeight/2)+'px)';
+                    var x = (video.videoWidth/2-eyescenter[0]);
+                    
+                    eye.style.transform='translate('+x+'px,'+0||(eyescenter[1]-video.videoHeight/2)+'px)';
 					eyelid.style.display = "none";
                     console.log(eyescenter);
+
+                    if(Android){
+                    	if(x>2){
+                    		Android.showToast(msg);
+                    	}
+                    	if(x<-2){
+                    		Android.showToast(msg);
+                    	}
+                    }
 					
 				} else {
 					eyelid.style.display = "block";
