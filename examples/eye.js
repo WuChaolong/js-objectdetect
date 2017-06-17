@@ -1,10 +1,10 @@
 window.onload = function() {
-	
+		
 		var smoother = new Smoother([0.9999999, 0.9999999, 0.999, 0.999], [0, 0, 0, 0]),
 			video = document.getElementById('video'),
 			eye = document.getElementById('eye'),
 			eyelid = document.getElementById('eyelid'),
-			detector;
+			detector,exact=[];
 				
 		try {
 			compatibility.getUserMedia({video: true}, function(stream) {
@@ -38,6 +38,13 @@ window.onload = function() {
 				var coords = detector.detect(video, 1);
 				if (coords[0]) {
 					var coord = coords[0];
+					if(exact.length<3){
+						exact.push(coord);
+						return;
+					}
+					exact = exact.sort();
+					coord = exact[1];
+					exact = [];
 					coord = smoother.smooth(coord);
 					
 					// Rescale coordinates from detector to video coordinate space:
@@ -53,7 +60,7 @@ window.onload = function() {
 					eyelid.style.display = "none";
                     console.log(eyescenter);
 
-                    if(Android){
+                    if(typeof Android === 'object'){
                     	if(x>2){
                     		Android.showToast(msg);
                     	}
@@ -65,6 +72,7 @@ window.onload = function() {
 				} else {
 					eyelid.style.display = "block";
                     console.log("can't see you!");
+                    exact = [];
 				}
 			}
 		}
