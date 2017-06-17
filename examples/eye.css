@@ -2,7 +2,8 @@
 
 #video{
   height: 100%;
-  min-width: 100%;
+  width: auto;
+  min-width: 100%;0% */
   border-radius: 50%;
   /* position: fixed; */
   position: absolute;
