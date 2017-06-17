@@ -14,7 +14,7 @@
   margin: auto;
   transform: rotateY(180deg); */
   background-color: black;
-  background-color: black;
+  /* background-color: black; */
   border-radius: 50%;
 }
 html{
@@ -106,7 +106,7 @@ div{
   position: absolute;
   top: 25%;
   left: 20%;
-  z-index: 1;
+  z-index: 2;
 }
 
 .eyelid{
@@ -121,7 +121,7 @@ div{
   margin-right: auto;
   -webkit-transform: scale(1.5, 1);
   -webkit-animation: bateye 5s infinite;
-  z-index: 2;
+  z-index: 6;
   /* display: block !important; */
   /* border-radius: initial; */
 }
