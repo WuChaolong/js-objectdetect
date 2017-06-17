@@ -13,6 +13,9 @@
   right: -100%;
   margin: auto;
   transform: rotateY(180deg); */
+  background-color: black;
+  background-color: black;
+  border-radius: 50%;
 }
 html{
     height: 100%;
@@ -84,10 +87,10 @@ div{
 }
 
 .pupil{
-  background-color: black;
+  /* background-color: black; */
   width: 45%;
   height: 45%;
-  overflow:hidden;
+  /* overflow:hidden; */
   position: absolute;
   top: 0;
   bottom: 0;
