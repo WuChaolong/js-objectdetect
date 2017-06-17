@@ -61,10 +61,13 @@ window.onload = function() {
                     console.log(eyescenter);
 
                     if(typeof Android === 'object'){
+
                     	if(x>2){
+                    		var msg = "Right";
                     		Android.showToast(msg);
                     	}
                     	if(x<-2){
+                    		var msg = "Left";
                     		Android.showToast(msg);
                     	}
                     }
