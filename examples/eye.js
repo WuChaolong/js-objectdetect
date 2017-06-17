@@ -4,7 +4,7 @@ window.onload = function() {
 			video = document.getElementById('video'),
 			eye = document.getElementById('eye'),
 			eyelid = document.getElementById('eyelid'),
-			detector,exact=[];
+			detector,exact=[],helpX,helpY;
 				
 		try {
 			compatibility.getUserMedia({video: true}, function(stream) {
@@ -22,6 +22,7 @@ window.onload = function() {
 		}
 		
 		function play() {
+			var coords,eyescenter,coord,width,height,msg,x,y;
 			compatibility.requestAnimationFrame(play);
 			if (video.paused) video.play();
           	
@@ -29,15 +30,15 @@ window.onload = function() {
 	          	
 	          	// Prepare the detector once the video dimensions are known:
 	          	if (!detector) {
-		      		var width = ~~(60 * video.videoWidth / video.videoHeight);
-					var height  =60;
+		      		width = ~~(60 * video.videoWidth / video.videoHeight);
+					height  =60;
 		      		detector = new objectdetect.detector(width, height, 1.1, objectdetect.frontalface);
 		      	}
           		
           		// Perform the actual detection:
 				var coords = detector.detect(video, 1);
 				if (coords[0]) {
-					var coord = coords[0];
+					coord = coords[0];
 					if(exact.length<3){
 						exact.push(coord);
 						return;
@@ -53,30 +54,29 @@ window.onload = function() {
 					coord[2] *= video.videoWidth / detector.canvas.width;
 					coord[3] *= video.videoHeight / detector.canvas.height;
 					
-                    var eyescenter = [coord[0]+coord[2]/2,coord[1] + coord[3]/(2/8*10)];
-                    var x = (video.videoWidth/2-eyescenter[0]);
-                    
-                    eye.style.transform='translate('+x+'px,'+0||(eyescenter[1]-video.videoHeight/2)+'px)';
+                    eyescenter = [coord[0]+coord[2]/2,coord[1] + coord[3]/(2/8*10)];
+                    x = (video.videoWidth/2-eyescenter[0]);
+                    y = (eyescenter[1]-video.videoHeight/2);
+                    eye.style.transform='translate('+x+'px,'+0||y+'px)';
 					eyelid.style.display = "none";
-                    console.log(eyescenter);
+//                     console.log(eyescenter);
+					console.log(0.5*x/video.videoWidth+","+0.5*y/video.videoHeight);
 
                     if(typeof Android === 'object'){
-
-                    	if(x>2){
-                    		var msg = "Right";
-                    		Android.showToast(msg);
-                    	}
-                    	if(x<-2){
-                    		var msg = "Left";
-                    		Android.showToast(msg);
-                    	}
+						x = 0.5*x/video.videoWidth;
+						y = 0.5*y/video.videoHeight;
+						if(!helpX||(x<0?-x:x)<(helpX<0?-helpX:helpX)-0.02){
+							helpX = x;
+                    		Android.turnHead(x,y);
+						}
                     }
-					
 				} else {
 					eyelid.style.display = "block";
                     console.log("can't see you!");
                     exact = [];
 				}
+
+				coords=eyescenter=coord=width=height=msg=null;
 			}
 		}
 	};

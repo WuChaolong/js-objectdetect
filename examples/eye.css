@@ -7,15 +7,15 @@
   border-radius: 50%;
   /* position: fixed; */
   position: absolute;
-  bottom: 0;
-  top: 0;
+  bottom: -100%;
+  top: -100%;
   left: -100%;
   right: -100%;
   margin: auto;
   transform: rotateY(180deg); */
   background-color: black;
   /* background-color: black; */
-  border-radius: 50%;
+  /* border-radius: 50%; */
   z-index: 1;
 }
 html{
